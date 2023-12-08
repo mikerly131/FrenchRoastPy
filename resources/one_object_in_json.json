@@ -1,0 +1,13 @@
+{
+  "id": 120,
+  "accounts": [
+    {
+      "accountNumber": 10000,
+      "balance": -9849.36},
+    {
+      "accountNumber": 10001,
+      "balance": 8113.17},
+    {
+      "accountNumber": 10002,
+      "balance": 15206.21}]
+}
