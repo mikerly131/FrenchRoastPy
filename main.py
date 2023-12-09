@@ -1,18 +1,22 @@
 # import pandas as pd
-# import numpy as np
-import csv
+import pandas as pd
+import numpy as np
+import collections as cts
 
-# Check the resources folder for csv file to process
-# Maybe a function at some point to read a desired csv in the resources folder
+# Get the CSV file as dataframe
+csv_main = pd.read_csv('./resources/transactions.csv', low_memory=False)
 
-with open('csvfile.csv' , 'r') as csvfile:
-    # create the object of csv.reader()
-    csv_file_reader = csv.reader(csvfile,delimiter=',')
-    for row in csv_file_reader:
-        print(row)
+# Get the accounts by customer id from dataframe, make it a dict, will be of lists
+csv_mod1 = pd.read_csv('./resources/transactions.csv', low_memory=False, header=0, usecols=['customerId', 'accountId'], index_col=None)
+csv_mod1_dict = csv_mod1.to_dict(orient='split')
+cust_acct_mod = csv_mod1_dict['data']
 
+# Create a dictionary of customer ids mapped to accounts
 id_dict = {}
-id_dict.update('key')
+for item in cust_acct_mod:
+    key, value_to_add = item
+    if key in id_dict and value_to_add not in id_dict[key]:
+        id_dict[key].append(value_to_add)
 
 # Output data needs to be a json array
 # Each thing in the array is an object for the customer/customer id
