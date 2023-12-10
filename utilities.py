@@ -1,5 +1,5 @@
 import pandas as pd
-
+import json
 
 # Function to get a list of transactions from a csv file
 def get_txns_list() -> list:
@@ -9,6 +9,17 @@ def get_txns_list() -> list:
     csv_txn_dict = csv_txn_df.to_dict(orient='split')
     txn_list = csv_txn_dict['data']
     return txn_list
+
+
+# Function to convert the txn amouns in a txn list to ints
+def convert_txn_amounts(txns: list):
+
+    for txn in txns:
+        val = int(txn[3] * 100)
+        d_val = round(float(val) / 100, 2)
+        txn[3] = round(d_val, 2)
+
+    return txns
 
 
 # Function to get a list of customers and accounts from given CSV
@@ -21,7 +32,7 @@ def get_cust_acct_list() -> list:
 
 
 # Function to get account log (list of dictionaries, each dictionary has 2 kvps, cust id and account,
-# Accounts is a list of dictionaries, each dictionary is has 2 kvps account number and balance
+# Accounts is a list of dictionaries, each dictionary has 2 kvps account number and balance
 def get_account_log(cust_acct_list: list) -> list:
 
     cust_acct_dict = make_cust_acct_dict(cust_acct_list)
@@ -53,13 +64,38 @@ def make_cust_acct_dict(a_list: list) -> dict:
 
 
 # Function to process transactions on the accounts' balances in the account log
-def process_transactions(account_log: list, txns: list):
+def process_transactions(txns: list, account_log: list):
 
-    # Now to figue out how to process transactions...
-    # could make a transaction list like i made a list to make an account log
-    # then i'd need some looping to go trough the transaction list 1 at a time
+    # Setup loop to process each transaction
+    for txn in txns:
+        cust_id, account_id, txnType, amount = txn
     # grab the cust id from transaction list, find matching cust id in account log
-    # grab accounts, for accounts
-    # find where acct id from txn list match acct num from accounts
-    # look at transaction type, update that balance in the log
-    pass
+        for cust in account_log:
+            if cust_id == cust['id']:
+                # grab accounts, for customer
+                for acct in cust['accounts']:
+                    # find where acct id from txn list match acct num from accounts
+                    if account_id == acct['accountNumber']:
+                        # look at transaction type, update that balance in the log
+                        if txnType == "withdrawal":
+                            acct['balance'] = round(acct['balance'] + amount, 2)
+                        else:
+                            acct['balance'] = round(acct['balance'] - amount, 2)
+    return account_log
+
+
+# Function to write the account_log to a json file in json_file directory
+def write_to_json(account_log: list):
+
+    with open('./json_files/account_log.json', 'w') as output_file:
+            json.dump(account_log, output_file)
+            output_file.close()
+
+# For test outputting 5 rows of data like df.head()
+# counter = 0
+# for i in sequence:
+#     comma separate variables in i = i to get assign each one
+#     print(variable) - to test its been assigned to one of them
+#     counter +=1
+#     if counter > 5:
+#         break

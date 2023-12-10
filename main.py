@@ -8,7 +8,8 @@ import sys
 def main():
 
     # Get the list of transactions to process
-    transaction_list = utilities.get_txns_list()
+    raw_txn_list = utilities.get_txns_list()
+    txn_list = utilities.convert_txn_amounts(raw_txn_list)
 
     # Get the accounts by customer id from dataframe, make it a dict, will be of lists
     cust_accts_list = utilities.get_cust_acct_list()
@@ -17,7 +18,11 @@ def main():
     cust_acct_log = utilities.get_account_log(cust_accts_list)
 
     # Process transactions to update the account log -> aka update balance of each account in log for each transaction
-    updated_account_log = utilities.process_transactions(cust_acct_log, transaction_list)
+    # updated_account_log = utilities.process_transactions(cust_acct_log, transaction_list)
+    list_unpack_test = utilities.process_transactions(txn_list, cust_acct_log)
+
+    # Write the account_log to a json file in json_file directory
+    utilities.write_to_json(list_unpack_test)
 
 
 if __name__ == "__main__":
