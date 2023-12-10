@@ -3,27 +3,6 @@ Module to provide methods (functions) for main program.
 They are utilities to create an account log from a csv file of transactions and determine the balance for accounts.
 """
 import pandas as pd
-import json
-
-
-# Function to prompt for file to run program on
-def get_file_name():
-    while True:
-        try:
-            file_id = int(input('Select file to process: 1 for first csv, 2 for second csv: \n'))
-        except ValueError:
-            print('Enter a 1 or a 2')
-        if 0 <= file_id <= 3:
-            break
-        else:
-            print('Enter a 1 or a 2')
-
-    if file_id == 1:
-        file_name = "transactions"
-    else:
-        file_name = "secondset"
-
-    return file_name
 
 
 # Function to get a list of transactions from a csv file
@@ -108,13 +87,6 @@ def process_transactions(txns: list, account_log: list):
                             acct['balance'] = round(acct['balance'] - amount, 2)
     return account_log
 
-
-# Function to write the account_log to a json file in json_file directory
-def write_to_json(account_log: list, file_name):
-
-    with open(f'./json_files/account_log{file_name}.json', 'w') as output_file:
-        json.dump(account_log, output_file)
-        output_file.close()
 
 # For test outputting 5 rows of data like df.head()
 # counter = 0
