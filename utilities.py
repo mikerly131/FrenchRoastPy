@@ -1,10 +1,35 @@
+"""
+Module to provide methods (functions) for main program.
+They are utilities to create an account log from a csv file of transactions and determine the balance for accounts.
+"""
 import pandas as pd
 import json
 
-# Function to get a list of transactions from a csv file
-def get_txns_list() -> list:
 
-    csv_txn_df = pd.read_csv('./resources/transactions.csv', low_memory=False, header=0,
+# Function to prompt for file to run program on
+def get_file_name():
+    while True:
+        try:
+            file_id = int(input('Select file to process: 1 for first csv, 2 for second csv: \n'))
+        except ValueError:
+            print('Enter a 1 or a 2')
+        if 0 <= file_id <= 3:
+            break
+        else:
+            print('Enter a 1 or a 2')
+
+    if file_id == 1:
+        file_name = "transactions"
+    else:
+        file_name = "secondset"
+
+    return file_name
+
+
+# Function to get a list of transactions from a csv file
+def get_txns_list(file_name) -> list:
+
+    csv_txn_df = pd.read_csv(f'./resources/{file_name}.csv', low_memory=False, header=0,
                          usecols=['customerId', 'accountId', 'transactionType', 'amount'], index_col=None)
     csv_txn_dict = csv_txn_df.to_dict(orient='split')
     txn_list = csv_txn_dict['data']
@@ -23,8 +48,8 @@ def convert_txn_amounts(txns: list):
 
 
 # Function to get a list of customers and accounts from given CSV
-def get_cust_acct_list() -> list:
-    csv_df = pd.read_csv('./resources/transactions.csv', low_memory=False, header=0,
+def get_cust_acct_list(file_name) -> list:
+    csv_df = pd.read_csv(f'./resources/{file_name}.csv', low_memory=False, header=0,
                            usecols=['customerId', 'accountId'], index_col=None)
     csv_dict = csv_df.to_dict(orient='split')
     cust_acct_list = csv_dict['data']
@@ -85,11 +110,11 @@ def process_transactions(txns: list, account_log: list):
 
 
 # Function to write the account_log to a json file in json_file directory
-def write_to_json(account_log: list):
+def write_to_json(account_log: list, file_name):
 
-    with open('./json_files/account_log.json', 'w') as output_file:
-            json.dump(account_log, output_file)
-            output_file.close()
+    with open(f'./json_files/account_log{file_name}.json', 'w') as output_file:
+        json.dump(account_log, output_file)
+        output_file.close()
 
 # For test outputting 5 rows of data like df.head()
 # counter = 0
